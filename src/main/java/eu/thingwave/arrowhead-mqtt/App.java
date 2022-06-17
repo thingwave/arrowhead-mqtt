@@ -1,13 +1,25 @@
+/********************************************************************************
+ * Copyright (c) 2022 ThingWave AB
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   ThingWave - design and implementation
+ *   Arrowhead Consortia - conceptualization
+ ********************************************************************************/
+
 package eu.thingwave.arrowheadmqtt;
 
+import java.util.List;
 import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Iterator;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.io.IOException;
-import java.lang.Process;
+//import java.util.Iterator;
+//import java.nio.file.Paths;
+//import java.nio.file.Files;
+//import java.nio.charset.StandardCharsets;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,27 +39,19 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.*;
 import java.security.cert.CertificateException;
 
-import java.sql.Timestamp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.io.IOException;
 
-import java.util.List;
-import java.util.ArrayList;
 
 
 /**
@@ -167,13 +171,9 @@ public class App implements MqttCallback, Runnable
 
       try {
 	for(int i=0; i<5*100000; i++) {
-    	  String content = ""; 
+	  long bt = System.currentTimeMillis();
 
-	  Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-	  long ts = timestamp.getTime() / 1000;
-	  long ms =  timestamp.getTime() - (ts * 1000) ;
-
-	  content = new String("[{\"bn\": \"producer\"}]");
+	  String content = new String("[{\"bn\": \"producer\"}]");
 	  //System.out.println("Publishing message: " + content);
 
 	  /* prepare message */
