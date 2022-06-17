@@ -31,10 +31,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 
 import java.sql.Timestamp;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -154,7 +152,18 @@ public class App implements MqttCallback, Runnable
       sampleClient.connect(connOpts);
       sampleClient.setCallback(this);
       sampleClient.subscribe(topic);
+      sampleClient.subscribe("my/own/topic");
       System.out.println("Connected");
+
+      GsonBuilder builder = new GsonBuilder();
+      Gson gson = builder.create();
+
+      MqttRequestDTO req = new MqttRequestDTO();
+      req.setMethod("GET");
+      req.setReplyTo("my/own/topic");
+      String outMsg = gson.toJson(req);
+      MqttMessage pingMessage = new MqttMessage(outMsg.getBytes());
+      sampleClient.publish("ah/serviceregistry/echo", pingMessage);
 
       try {
 	for(int i=0; i<5*100000; i++) {
@@ -165,14 +174,15 @@ public class App implements MqttCallback, Runnable
 	  long ms =  timestamp.getTime() - (ts * 1000) ;
 
 	  content = new String("[{\"bn\": \"producer\"}]");
-	  System.out.println("Publishing message: " + content);
+	  //System.out.println("Publishing message: " + content);
 
 	  /* prepare message */
 	  MqttMessage message = new MqttMessage(content.getBytes());
 	  message.setQos(qos);
 	  if (subscribe_only == false && log_only==false) {
-	    sampleClient.publish(topic, message);
-	    System.out.println("Message published");
+	    //sampleClient.publish(topic, message);
+	    //System.out.println("Message published");
+	    sampleClient.publish("ah/serviceregistry/echo", pingMessage);
 	  }
 	  Thread.sleep(1000);
 	}
@@ -210,8 +220,8 @@ public class App implements MqttCallback, Runnable
 
   @Override
     public void messageArrived(String topic, MqttMessage message) {
-      if(this.subscribe_only == false)
-	return;
+      //if(this.subscribe_only == false)
+	//return;
       String jsonstr = message.toString();
       messages.add(jsonstr);
       System.out.println("Received message:\n" + message);
@@ -236,8 +246,6 @@ public class App implements MqttCallback, Runnable
 
   @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-      // TODO Auto-generated method stub
-      //System.out.println("published");
     }
 
 }
