@@ -16,13 +16,11 @@ package eu.thingwave.arrowheadmqtt;
 
 import java.util.List;
 import java.util.ArrayList;
-//import java.util.Iterator;
-//import java.nio.file.Paths;
-//import java.nio.file.Files;
-//import java.nio.charset.StandardCharsets;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.nio.charset.Charset;
 import java.io.OutputStream;
 import java.util.Properties;
 
@@ -44,14 +42,9 @@ import java.security.cert.CertificateException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-
+//import java.io.FileWriter;
+//import java.io.PrintWriter;
 
 
 /**
@@ -70,18 +63,17 @@ public class App implements MqttCallback, Runnable
     messages = new ArrayList<String>();
 
     prop = new Properties();
-    InputStream input = null;
 
     try {
-      input = new FileInputStream("app.properties");
+      final InputStream input = new FileInputStream("app.properties");
       prop.load(input);
 
-      System.out.println(prop.getProperty("cafile"));
+      /*System.out.println(prop.getProperty("cafile"));
       System.out.println(prop.getProperty("certfile"));
       System.out.println(prop.getProperty("keyfile"));
 
       System.out.println(prop.getProperty("broker-url"));
-      System.out.println(prop.getProperty("topic"));
+      System.out.println(prop.getProperty("topic"));*/
 
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -119,7 +111,7 @@ public class App implements MqttCallback, Runnable
 	    messages.remove(0);
 	    //System.out.println(msg);
 	  }
-	  Thread.sleep(2000);
+	  Thread.sleep(1000);
 	}
       } catch(InterruptedException iex) {
 	System.out.println("Interrupted!");
@@ -129,6 +121,10 @@ public class App implements MqttCallback, Runnable
 
 
 
+  /**
+   * \fn doDemo()
+   *
+   */
   public void doDemo(String clientId, boolean subscribe_only){
     String topic        = prop.getProperty("topic");
     int qos             = 2;
@@ -148,7 +144,10 @@ public class App implements MqttCallback, Runnable
       }
 
       try {
-	    connOpts.setSocketFactory(SslUtil.getSocketFactory(prop.getProperty("cafile"), prop.getProperty("certfile"), prop.getProperty("keyfile"), prop.getProperty("username")));
+	    connOpts.setSocketFactory(SslUtil.getSocketFactory(prop.getProperty("cafile"), 
+				    prop.getProperty("certfile"), 
+				    prop.getProperty("keyfile"), 
+				    prop.getProperty("username")));
       } catch(Exception err) {
 	    System.out.println("Certificate exception(s): " + err);
       }
@@ -156,7 +155,7 @@ public class App implements MqttCallback, Runnable
       sampleClient.connect(connOpts);
       sampleClient.setCallback(this);
       sampleClient.subscribe(topic);
-      sampleClient.subscribe("my/own/topic");
+      sampleClient.subscribe(prop.getProperty("systemName") + "/replies");
       System.out.println("Connected");
 
       GsonBuilder builder = new GsonBuilder();
@@ -164,7 +163,7 @@ public class App implements MqttCallback, Runnable
 
       MqttRequestDTO req = new MqttRequestDTO();
       req.setMethod("GET");
-      req.setReplyTo("my/own/topic");
+      req.setReplyTo(prop.getProperty("systemName") + "/replies");
       String outMsg = gson.toJson(req);
       MqttMessage pingMessage = new MqttMessage(outMsg.getBytes());
       sampleClient.publish("ah/serviceregistry/echo", pingMessage);
@@ -173,12 +172,12 @@ public class App implements MqttCallback, Runnable
 	for(int i=0; i<5*100000; i++) {
 	  long bt = System.currentTimeMillis();
 
-	  String content = new String("[{\"bn\": \"producer\"}]");
+	  //String content = new String("[{\"bn\": \"producer\"}]");
 	  //System.out.println("Publishing message: " + content);
 
 	  /* prepare message */
-	  MqttMessage message = new MqttMessage(content.getBytes());
-	  message.setQos(qos);
+	  //MqttMessage message = new MqttMessage(content.getBytes());
+	  //message.setQos(qos);
 	  if (subscribe_only == false && log_only==false) {
 	    //sampleClient.publish(topic, message);
 	    //System.out.println("Message published");
