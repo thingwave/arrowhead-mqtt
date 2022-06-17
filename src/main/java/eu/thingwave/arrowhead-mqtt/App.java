@@ -148,7 +148,7 @@ public class App implements MqttCallback, Runnable
       try {
 	    connOpts.setSocketFactory(SslUtil.getSocketFactory(prop.getProperty("cafile"), prop.getProperty("certfile"), prop.getProperty("keyfile"), prop.getProperty("username")));
       } catch(Exception err) {
-	    System.out.println("cert exception: " + err);
+	    System.out.println("Certificate exception(s): " + err);
       }
       System.out.println("Connecting to broker: "+broker + " with topic: " + topic);
       sampleClient.connect(connOpts);

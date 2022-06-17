@@ -45,11 +45,11 @@ public class SslUtil
 				}*/
 		);
 		KeyPair key = null; //(KeyPair)reader.readObject();
-        JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
-        PEMDecryptorProvider decProv = new     JcePEMDecryptorProviderBuilder().build(password.toCharArray());
-    	PEMKeyPair pkp = null;
-        pkp = (PEMKeyPair)reader.readObject();
-        key = converter.getKeyPair(pkp);
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+		PEMDecryptorProvider decProv = new     JcePEMDecryptorProviderBuilder().build(password.toCharArray());
+		PEMKeyPair pkp = null;
+		pkp = (PEMKeyPair)reader.readObject();
+		key = converter.getKeyPair(pkp);
 		reader.close();
 
 		// CA certificate is used to authenticate server
