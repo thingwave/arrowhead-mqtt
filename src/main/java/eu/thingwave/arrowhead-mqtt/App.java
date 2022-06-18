@@ -128,7 +128,7 @@ public class App implements MqttCallback, Runnable
   public void doDemo(String clientId, boolean subscribe_only){
     String topic        = prop.getProperty("topic");
     int qos             = 2;
-    String broker       = prop.getProperty("broker-url");
+    String broker       = prop.getProperty("brokerUrl");
     MemoryPersistence persistence = new MemoryPersistence();
 
     try {
